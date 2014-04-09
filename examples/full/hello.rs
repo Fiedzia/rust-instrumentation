@@ -1,8 +1,9 @@
-//#![feature(macro_rules)]
-//#![feature(phase)]
+#![crate_id = "hello#1.0"]
+
+extern crate instrumentation;
+use std::io::timer::sleep;
 
 
-mod instrumentation;
 mod app_instrumentation;
 
 
@@ -12,10 +13,9 @@ fn main(){
 		let chan = instrumentation::init();
 	  app_instrumentation::init(chan);
 	  println!("starting hello");
+		//lets do something to keep it running
 		loop {
-			foo += 1;
-			if foo > 100_000 {
-				foo = 0;
-			}
+			println!("I'm working");
+			sleep(2*1000);
 		}
 }

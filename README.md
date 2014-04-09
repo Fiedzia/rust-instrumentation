@@ -1,3 +1,58 @@
+Rust Instrumentation
+
+Simple and user-friendly instrumentation for rust applications.
+
+Usage:
+
+    Application code:
+
+        your_app/app_instrumentation.rs:
+
+            
+            use std::comm::Sender;
+            use std::default::Default;
+            use instrumentation;
+            
+            pub fn get_key(_self: &instrumentation::Instrument, key:~str) -> Option<~str> {
+            
+            	  if key == ~"foo" {
+            			  Some(~"10")
+            		} else if key == ~"bar" {
+            			  Some(~"20")
+            		} else { None }
+            }
+            
+            pub fn get_subkeys(_self: &instrumentation::Instrument, root:Option<~str>) -> Option<~[~str]>  {
+            	  match root {
+            		    None => Some(~[~"foo", ~"bar"]),
+            			  Some(_) => None
+            		}
+            }
+            
+            pub fn init (sender:Sender<instrumentation::Instrument>){
+            	  let mut my_instrument = instrumentation::Instrument{name: "myapp", _get_key: Some(get_key), _get_subkeys: Some(get_subkeys), ..Default::default()};
+            		instrumentation::register(sender, my_instrument);
+            }
+
+
+        main.rs:
+
+            use instrumentation;
+
+            fn main(){
+                //...
+                let chan = instrumentation::init();
+                app_instrumentation::init(chan);
+            }
+
+
+    Runtime usage:
+
+        INSTRUMENTATION="socket.unix on; socket.unix.file /tmp/instr"; ./your_app
+        rmx -p socket.unix -l /tmp/instr myapp.foo
+        
+
+
 Ideally:
 
  - macros for various types of metrics (time measurement, counter, event log, histogram, time histogram
