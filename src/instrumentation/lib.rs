@@ -4,6 +4,7 @@
 extern crate collections;
 extern crate serialize;
 extern crate sync;
+extern crate serialize;
 
 use std::comm::{Sender, Receiver};
 use std::default::Default;
@@ -94,27 +95,28 @@ fn start (receiver:Receiver<Instrument>, command_sender: Sender<types::CommandWi
 						let (cmd, param) = request;
 						//handle top-level requests
 						if param.is_none() {
-							let result:Option<~str> = if cmd == ~"GET_KEY" { None }
-							else if cmd == ~"HAS_KEY" { None}
+							let result:json::Json = if cmd == ~"GET_KEY" { json::Null }
+							else if cmd == ~"HAS_KEY" { json::Null }
 							else if cmd == ~"GET_SUBKEYS" {
-								let keys: ~[~str] = instruments.keys().map(|k| k.to_owned()).collect();
-								//let s:~str = json::List(keys);
-								let s:~str = json::Encoder::str_encode(&keys);
-								Some(s) 
+								let keys: ~[json::Json] = instruments.keys().map(|k| json::String(k.to_owned())).collect();
+								json::List(keys)
 							}
-							else { None };
+							else { json::Null };
 							  
 							cmd_response_sender.send(result);
 						} else {
 							let (first, rest) = dotsplit(param.unwrap());
+
 							if !instruments.contains_key(&first) {
-									cmd_response_sender.send(None);
-							} else if rest.is_none() && first != ~"GET_SUBKEYS" {
-									cmd_response_sender.send(None);
+									cmd_response_sender.send(json::Null);
+							} else if rest.is_none() && cmd != ~"GET_SUBKEYS" {
+									cmd_response_sender.send(json::Null);
 							} else {
 									let inst = instruments.get(&first);
-									let result = if cmd == ~"GET_KEY" { let f = inst.get_key(rest.unwrap()); println!("f::{}", f); f }
-									else {None };
+									let result = if cmd == ~"GET_KEY" { inst.get_key(rest.unwrap()) }
+									else if cmd == ~"HAS_KEY" { json::Boolean(inst.has_key(rest.unwrap())) }
+									else if cmd == ~"GET_SUBKEYS" { inst.get_subkeys(rest) }
+									else { json::Null };
 									cmd_response_sender.send(result);
 									/*cmd_response_sender.send(
 											match(cmd) {
@@ -125,29 +127,12 @@ fn start (receiver:Receiver<Instrument>, command_sender: Sender<types::CommandWi
 											}
 									);*/
 							}
-							//}
 
 						}
 						
 				} else {fail!("select?") }
 				
 		}
-
-    /*loop {
-        let instrument = receiver.recv_opt();
-				println!("got instrument");
-				let data = command_receiver.recv();
-				let (cmd_response_sender, cmd) = data;
-				cmd_response_sender.send(Some(~"7"));
-
-        //handle case when
-        //sender channels goes out of scope
-        //causing receiver to be closed by rust
-        if !instrument.is_ok() { break; }
-				let n:~str = instrument.unwrap().name.clone().to_owned();
-				//select
-
-    }*/
 }
 
 

@@ -4,11 +4,11 @@ use std::os::getenv;
 use std::path;
 use collections::HashMap;
 use std::result::Result;
+use serialize::json;
 
 
-
-pub type GetSubkeysFunc = fn(&Instrument, Option<~str>) -> Option<~[~str]>;
-pub type GetKeyFunc = fn(&Instrument, ~str) -> Option<~str>;
+pub type GetSubkeysFunc = fn(&Instrument, Option<~str>) -> json::Json;
+pub type GetKeyFunc = fn(&Instrument, ~str) -> json::Json;
 pub type HasKeyFunc = fn(&Instrument, ~str) -> bool;
 
 
@@ -26,17 +26,17 @@ pub struct Instrument {
 
 impl Instrument {
     #[allow(dead_code)]
-    pub fn get_subkeys(&self, root:Option<~str>) -> Option<~[~str]> {
+    pub fn get_subkeys(&self, root:Option<~str>) -> json::Json {
         match self._get_subkeys {
-            None => None,
+            None => json::Null,
             Some(fn_get_subkeys) => fn_get_subkeys(self, root)
         }
     }
 
 		#[allow(dead_code)]
-    pub fn get_key(&self, key:~str) -> Option<~str> {
+    pub fn get_key(&self, key:~str) -> json::Json {
         match self._get_key {
-            None => None,
+            None => json::Null,
             Some(fn_get_key) => fn_get_key(self, key)
         }
     }
@@ -69,7 +69,7 @@ pub type Command = (~str, Option<~str>);
 pub type CommandWithSender = (Sender<CommandResponse>, Command);
 
 pub type CommandChannel = (Sender<CommandWithSender>, Receiver<CommandWithSender>);
-pub type CommandResponse = Option<~str>;
+pub type CommandResponse = json::Json;
 
 //pub type CommandChannel = (Sender<Command>, Receiver<Command>);
 

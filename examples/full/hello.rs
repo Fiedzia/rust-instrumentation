@@ -1,11 +1,11 @@
 #![crate_id = "hello#1.0"]
+extern crate serialize;
 
 extern crate instrumentation;
+
 use std::io::timer::sleep;
 
-
 mod app_instrumentation;
-
 
 
 fn main(){

@@ -8,6 +8,7 @@ use std::vec::Vec;
 use std;
 use std::mem;
 use std::io::MemWriter;
+use serialize::json;
 
 mod configparse;
 mod types;
@@ -88,22 +89,14 @@ fn decode_message(raw_msg:&Vec<u8>)-> Result<(~str, Option<~str>), ~str> {
 		}
 }
 
-fn encode_message(msg: Option<~str>) -> ~Vec<u8> {
-		let b:~[u8] = match msg {
-			 Some(x) => x.as_bytes().to_owned(),
-			 None => "null".as_bytes().to_owned()
-		};
+fn encode_message(msg: json::Json) -> ~Vec<u8> {
 
-	  let raw_bytes:Vec<u8> = Vec::from_slice(b);
+	  let raw_bytes:Vec<u8> = Vec::from_slice(msg.to_str().as_bytes());
 		let mut memwriter = MemWriter::with_capacity(4+raw_bytes.len());
 
-		//let mut result:Vec<u8> = Vec::with_capacity(4+raw_bytes.len());
 		memwriter.write_be_u32(raw_bytes.len() as u32);
 		memwriter.write(raw_bytes.as_slice());
-		let buf = memwriter.unwrap();
-		println!("{}", buf);
-		~buf
-		//~memwriter.unwrap()
+		~memwriter.unwrap()
 }
 
 

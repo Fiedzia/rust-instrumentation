@@ -1,21 +1,24 @@
 use std::comm::Sender;
 use std::default::Default;
+use serialize::json;
+
 use instrumentation;
 
-pub fn get_key(_self: &instrumentation::Instrument, key:~str) -> Option<~str> {
+pub fn get_key(_self: &instrumentation::Instrument, key:~str) -> json::Json {
 
 		println!("here::{}", key);
 	  if key == ~"foo" {
-			  Some(~"10")
+			  json::Number(10 as f64)
 		} else if key == ~"bar" {
-			  Some(~"20")
-		} else { None }
+			  json::Number(20 as f64)
+		} else { json::Null }
 }
 
-pub fn get_subkeys(_self: &instrumentation::Instrument, root:Option<~str>) -> Option<~[~str]>  {
+pub fn get_subkeys(_self: &instrumentation::Instrument, root:Option<~str>) -> json::Json  {
+	  println!("here:: {}", root);
 	  match root {
-		    None => Some(~[~"foo", ~"bar"]),
-			  Some(_) => None
+		    None => json::List(~[json::String(~"foo"), json::String(~"bar")]),
+			  Some(_) => json::Null
 		}
 }
 
