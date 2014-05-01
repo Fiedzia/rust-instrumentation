@@ -42,6 +42,7 @@ pub fn init(config:&HashMap<~str, ~str>, command_sender:Sender<types::CommandWit
                     let mut client_stream = client.unwrap();
                     handle_client(client_stream, command_sender_clone, MAX_PACKET_SIZE);
                 });
+								
             }
         });
     } else {

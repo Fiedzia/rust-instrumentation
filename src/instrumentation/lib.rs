@@ -79,10 +79,10 @@ fn handle_request(command: ~types::Command, instruments: &HashMap<~str, Instrume
 		//WTF:changing code below to use match breaks rustc.
 		result =
 				if cmd_slice == consts::GET_KEY {
-
 						if param.is_none() { return json::Null };
 						let keys = get_keys(instruments);
 		        let (first, rest) = dotsplit(param.unwrap());
+						if rest.is_none() { return json::Null }
         		if !instruments.contains_key(&first) { return json::Null }
             let inst = instruments.get(&first);
 						inst.get_key(rest.unwrap())

@@ -15,6 +15,8 @@ General idea:
 
 Usage:
 
+    First, you will need cargo-lite (https://github.com/cmr/cargo-lite)
+    in order to build it.
     See examples/full for code you'll need to add to you app.
     In the simplest case you'll need to add few lines of boiler plate
     to your main.rs and implement fn get_key(key:~str) -> Option(~str).
@@ -22,23 +24,32 @@ Usage:
     Runtime usage:
 
         INSTRUMENTATION="socket.unix on; socket.unix.file /tmp/instr"; ./your_app
-        rmx.py -c '/tmp/instr' GET_KEY yourapp.foo
+        rmx.py -c 'unix:///tmp/instr' GET_KEY yourapp.foo
 
-        $ 7
+        $ GET_KEY yourapp.foo 7
 
 		Note that instrumentation configuration comes from env variable
-    (it can be stored in a file as well). This allows user/system admin
-    to control if and how metrics can be accessed to make it as convenient
-		as possible.
+    (it can be stored in a instrumentation.cond file as well).
+    This allows user/system admin to control if and how metrics can be accessed
+    to make it as convenient as possible.
+
+Current state:
+
+    It compiles, so I'm shipping it :-)
+    For now its closer to more proof of concept then to usable code.
+    Any error handling is missing and its likely to be buggy.
+    Interface will definitely change at least a bit.
 
 
 TODO:
 
-    * Code cleanup
+    * Fix failure messages for closed sockets
+    * Replace ~ with & whenever possible
     * Tests
     * Proper error handling
-    * Use rust logging instead of println
-    * Add tcp/http/websockets listeners
-    * support for pushing metrics to zabbix/graphite/whatever
+    * Include errors/metadata in returned json
+    * Add http listener
+    * Support for pushing metrics to zabbix/graphite/whatever
     * Write documentation
     * Pagination for GET_SUBKEYS?
+    * Parse existing instrumentation.conf by rmx.

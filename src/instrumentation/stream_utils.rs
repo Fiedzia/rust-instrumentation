@@ -87,7 +87,11 @@ pub fn handle_client<T: Reader+Writer>(mut client_stream: T, command_sender:Send
     loop {
         let mut bsize:int = 0;
         match client_stream.read_be_u32() {
-            Err(e) => fail!(format!("client read failed: {}", e)),
+            Err(e) => {
+						    //client_stream.close();
+								info!("client read failed: {}", e);
+								return
+						}
             Ok(packet_size) => {
                 if packet_size > max_packet_size { fail!("packet size exceeded")};
                 let bytes = client_stream.read_exact(packet_size as uint);
