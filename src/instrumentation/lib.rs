@@ -68,7 +68,6 @@ fn dotsplit(s:~str) -> (~str, Option<~str>) {
 
 
 fn handle_request(command: ~types::Command, instruments: &HashMap<~str, Instrument>) -> json::Json {
-
     fn get_keys(instruments: &HashMap<~str, Instrument>) -> ~[json::Json] {
 				instruments.keys().map(|k| json::String(k.to_owned())).collect()
 		};
@@ -76,32 +75,39 @@ fn handle_request(command: ~types::Command, instruments: &HashMap<~str, Instrume
     let (cmd, param) = *command;
 		let result: json::Json;
 
-		return match cmd.as_slice() {
-				consts::GET_KEY => {
+		let cmd_slice = cmd.as_slice();
+		//WTF:changing code below to use match breaks rustc.
+		result =
+				if cmd_slice == consts::GET_KEY {
+
 						if param.is_none() { return json::Null };
 						let keys = get_keys(instruments);
 		        let (first, rest) = dotsplit(param.unwrap());
         		if !instruments.contains_key(&first) { return json::Null }
             let inst = instruments.get(&first);
 						inst.get_key(rest.unwrap())
-				},
-				consts::HAS_KEY => {
-						if param.is_none() { return json::Null };
+
+				} else if cmd_slice == consts::HAS_KEY {
+
+					  if param.is_none() { return json::Null };
 		        let (first, rest) = dotsplit(param.unwrap());
         		if !instruments.contains_key(&first) { return json::Null }
             let inst = instruments.get(&first);
+						if rest.is_none() {return json::Null };
 						json::Boolean(inst.has_key(rest.unwrap()))
-				},
-				consts::GET_SUBKEYS => {
+
+				} else if cmd_slice == consts::GET_SUBKEYS {
+
 						let keys = get_keys(instruments);
 						if param.is_none() { return json::List(keys) }
 		        let (first, rest) = dotsplit(param.unwrap());
         		if !instruments.contains_key(&first) { return json::Null }
             let inst = instruments.get(&first);
 						inst.get_subkeys(rest)
-			},
-				_ => json::Null
-		}
+
+				} else { json::Null };
+    result
+
 }
 
 fn instrumentation_task (receiver:Receiver<Instrument>, command_sender: Sender<types::CommandWithSender>, command_receiver: Receiver<types::CommandWithSender>){
@@ -109,8 +115,8 @@ fn instrumentation_task (receiver:Receiver<Instrument>, command_sender: Sender<t
     let config_result = get_config();
     match config_result {
       Ok(config) => {
-					unix::init(&config,  command_sender.clone());
-					tcp::init(&config,  command_sender.clone());
+					unix::init(~config.clone(),  command_sender.clone());
+					tcp::init(~config.clone(),  command_sender.clone());
 
 
 			},

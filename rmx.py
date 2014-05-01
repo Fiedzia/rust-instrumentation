@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import sys
 import struct
 import argparse
 import socket
 import json
+import binascii
 
 MAX_MSG_SIZE = 2**16-1
 
@@ -47,11 +49,19 @@ args = parse_args()
 
 key = args.key
 cmd = args.command
-s=socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-s.connect('/tmp/hello_instrumentation')
+if args.connection.startswith('unix://'):
+    s=socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.connect(args.connection[7:])
+elif args.connection.startswith('tcp://'):
+    addr, port = args.connection[6:].split(':')
+    addr = addr or '127.0.0.1'
+    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((addr, int(port)))
+else:
+    sys.stderr.write('Unknown protocol: {}\n'.format(args.connection))
+    sys.exit(1)
 
 s.send(prepare_msg(cmd, key))
-#s.send(prepare_msg('GET_SUBKEYS', 'myapp'))
 print(read_msg(s))
 
 
