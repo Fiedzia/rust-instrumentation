@@ -21,22 +21,49 @@ Usage:
     In the simplest case you'll need to add few lines of boiler plate
     to your main.rs and implement fn get_key(key:~str) -> Option(~str).
 
-    Runtime usage:
+    Using attached example:
 
-        INSTRUMENTATION="socket.unix on; socket.unix.file /tmp/instr"; ./your_app
-        rmx.py -c 'unix:///tmp/instr' GET_KEY yourapp.foo
+        #shell one
+				cd examples/full
+        cargo-lite build --force
+				./hello  # now we have app running that we can query
 
-        $ GET_KEY yourapp.foo 7
+        #shell two
+        cd examples/full
+        ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_KEY myapp.bar
+				$ GET_KEY myapp.bar 20
 
-		Note that instrumentation configuration comes from env variable
-    (it can be stored in a instrumentation.cond file as well).
-    This allows user/system admin to control if and how metrics can be accessed
-    to make it as convenient as possible.
+        ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS
+				$ GET_SUBKEYS None ['myapp']
+
+        ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS myapp
+				$ GET_SUBKEYS myapp ['foo', ''bar]
+
+
+		Note that instrumentation configuration comes from instrumentation.conf file.
+    (it can be stored in INSTRUMENTATION env var as well).
+    This puts application user in control if and how metrics can be accessed
+    to make it as convenient for him as possible.
+
+Configuration:
+
+		Example instrumentation.conf:
+
+    to enable unix socket:
+		
+        socket.unix on
+        socket.unix.path "/tmp/hello_instrumentation"
+
+    to enable tcp socket:
+    
+        socket.tcp on
+        socket.tcp.port 6000
+        socket.tcp.addr 127.0.0.1
 
 Current state:
 
-    It compiles, so I'm shipping it :-)
-    For now its closer to more proof of concept then to usable code.
+    It compiles, so I'm shipping :-)
+    For now its closer to proof of concept then to usable code.
     Any error handling is missing and its likely to be buggy.
     Interface will definitely change at least a bit.
 
