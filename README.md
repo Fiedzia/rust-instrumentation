@@ -24,33 +24,33 @@ Usage:
     Using attached example:
 
         #shell one
-				cd examples/full
+        cd examples/full
         cargo-lite build --force
-				./hello  # now we have app running that we can query
+        ./hello  # now we have app running that we can query
 
         #shell two
         cd examples/full
         ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_KEY myapp.bar
-				$ GET_KEY myapp.bar 20
+        $ GET_KEY myapp.bar 20
 
         ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS
-				$ GET_SUBKEYS None ['myapp']
+        $ GET_SUBKEYS None ['myapp']
 
         ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS myapp
-				$ GET_SUBKEYS myapp ['foo', ''bar]
+        $ GET_SUBKEYS myapp ['foo', ''bar]
 
 
-		Note that instrumentation configuration comes from instrumentation.conf file.
+        Note that instrumentation configuration comes from instrumentation.conf file.
     (it can be stored in INSTRUMENTATION env var as well).
     This puts application user in control if and how metrics can be accessed
     to make it as convenient for him as possible.
 
 Configuration:
 
-		Example instrumentation.conf:
+    Example instrumentation.conf:
 
     to enable unix socket:
-		
+        
         socket.unix on
         socket.unix.path "/tmp/hello_instrumentation"
 
