@@ -26,6 +26,7 @@ pub use consts::{CONFIG_FILE, ENV_VAR};
 
 mod configparse;
 mod unix;
+mod tcp;
 mod types;
 mod consts;
 
@@ -107,7 +108,12 @@ fn instrumentation_task (receiver:Receiver<Instrument>, command_sender: Sender<t
 
     let config_result = get_config();
     match config_result {
-      Ok(config) => { unix::init(config,  command_sender.clone());},
+      Ok(config) => {
+					unix::init(&config,  command_sender.clone());
+					tcp::init(&config,  command_sender.clone());
+
+
+			},
       Err(errstr) => fail!(errstr)
     }
     

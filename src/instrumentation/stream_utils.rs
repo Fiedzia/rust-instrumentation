@@ -26,6 +26,7 @@ use collections::HashMap;
 use std::mem;
 use std::io::{Listener, Acceptor, IoError};
 use std::io::net::unix::{UnixListener, UnixStream};
+use std::io::{Reader, Writer};
 use std::io::fs;
 use std::result::Result;
 use std::vec::Vec;
@@ -80,3 +81,33 @@ pub fn encode_message(msg: json::Json) -> ~Vec<u8> {
 		~memwriter.unwrap()
 }
 
+
+pub fn handle_client<T: Reader+Writer>(mut client_stream: T, command_sender:Sender<types::CommandWithSender>, max_packet_size:u32) {
+
+    loop {
+        let mut bsize:int = 0;
+        match client_stream.read_be_u32() {
+            Err(e) => fail!(format!("client read failed: {}", e)),
+            Ok(packet_size) => {
+                if packet_size > max_packet_size { fail!("packet size exceeded")};
+                let bytes = client_stream.read_exact(packet_size as uint);
+                match bytes {
+                    Ok(bytes) => {
+                        match decode_message(&bytes){
+                            Err(e) => fail!(format!("Failed to decode message: {}", e)),
+                            Ok((cmd, key)) => {
+                              let response_channel:types::CommandResponseChannel = channel();
+                              let (response_sender, response_receiver) = response_channel;
+                              let x : types::CommandWithSender = (response_sender, (cmd, key));
+                              command_sender.send(x);
+                              let x = response_receiver.recv();
+                              client_stream.write(encode_message(x).as_slice());
+                            }
+                        }
+                    },
+                    Err(e) => { return}
+                }
+            }
+        }
+    }
+}
