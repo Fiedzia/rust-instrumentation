@@ -38,7 +38,6 @@ TODO:
     * Tests
     * Proper error handling
     * Use rust logging instead of println
-    * Change return type from Option<~str> to json::Encodeable (or similar)
     * Add tcp/http/websockets listeners
     * support for pushing metrics to zabbix/graphite/whatever
     * Write documentation

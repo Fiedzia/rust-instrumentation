@@ -6,7 +6,6 @@ use instrumentation;
 
 pub fn get_key(_self: &instrumentation::Instrument, key:~str) -> json::Json {
 
-		println!("here::{}", key);
 	  if key == ~"foo" {
 			  json::Number(10 as f64)
 		} else if key == ~"bar" {
@@ -15,7 +14,6 @@ pub fn get_key(_self: &instrumentation::Instrument, key:~str) -> json::Json {
 }
 
 pub fn get_subkeys(_self: &instrumentation::Instrument, root:Option<~str>) -> json::Json  {
-	  println!("here:: {}", root);
 	  match root {
 		    None => json::List(~[json::String(~"foo"), json::String(~"bar")]),
 			  Some(_) => json::Null

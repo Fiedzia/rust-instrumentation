@@ -67,12 +67,8 @@ impl Default for Instrument {
 pub type InstrumentationChannel = (Sender<Instrument>, Receiver<Instrument>);
 pub type Command = (~str, Option<~str>);
 pub type CommandWithSender = (Sender<CommandResponse>, Command);
-
 pub type CommandChannel = (Sender<CommandWithSender>, Receiver<CommandWithSender>);
 pub type CommandResponse = json::Json;
-
-//pub type CommandChannel = (Sender<Command>, Receiver<Command>);
-
 pub type CommandResponseChannel = (Sender<CommandResponse>, Receiver<CommandResponse>);
 
 
