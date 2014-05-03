@@ -24,16 +24,15 @@ def prepare_msg(op, key):
 
 
 def read_msg(s):
-    #import pudb; pudb.set_trace()
     data = s.recv(4)
     msg_size = struct.unpack('>I', data)[0]
     if msg_size < 0 or msg_size > MAX_MSG_SIZE:
         raise Exception('invalid msg_size: {}'.format(msg_size))
     msg = s.recv(msg_size).decode('utf8')
     parsed_msg = json.loads(msg)
-    if parsed_msg.error:
-        raise MsgError(parsed_msg.error)
-    return parsed_msg
+    if 'error' in parsed_msg and parsed_msg['error']:
+        raise MsgError(parsed_msg['error'])
+    return parsed_msg['result']
 
 
 def parse_args():
