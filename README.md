@@ -24,25 +24,25 @@ See examples/full for code you'll need to add to you app.
 In the simplest case you'll need to add few lines of boiler plate
 to your main.rs and implement fn get_key(key:~str) -> Option(~str).
 
-Using attached example:
+Using attached example
 
-		```sh
-    #shell one
-    cd examples/full
-    cargo-lite build --force
-    ./hello  # now we have app running that we can query
+```sh
+#shell one
+cd examples/full
+cargo-lite build --force
+./hello  # now we have app running that we can query
 
-    #shell two
-    cd examples/full
-    ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_KEY myapp.bar
-    $ GET_KEY myapp.bar 20
+#shell two
+cd examples/full
+../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_KEY myapp.bar
+$ GET_KEY myapp.bar 20
 
-    ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS
-    $ GET_SUBKEYS None ['myapp']
+../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS
+$ GET_SUBKEYS None ['myapp']
 
-    ../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS myapp
-    $ GET_SUBKEYS myapp ['foo', ''bar]
-    ```
+../../rmx.py -c 'unix:///tmp/hello_instrumentation' GET_SUBKEYS myapp
+$ GET_SUBKEYS myapp ['foo', ''bar]
+```
 
 
     Note that instrumentation configuration comes from instrumentation.conf file.
