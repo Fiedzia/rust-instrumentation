@@ -71,7 +71,6 @@ fn handle_request(command: ~types::Command,
     result =
         if cmd_slice == consts::GET_KEY {
             if param.is_none() { return json::Null };
-            let keys = get_keys(instruments);
             let (first, rest) = dotsplit(param.unwrap());
             if rest.is_none() { return json::Null }
             if !instruments.contains_key(&first) { return json::Null }
@@ -110,8 +109,8 @@ fn instrumentation_main(receiver:Receiver<Instrument>,
     let config_result = get_config();
     match config_result {
       Ok(config) => {
-          unix::init(~config.clone(),  command_sender.clone());
-          tcp::init(~config.clone(),  command_sender.clone());
+          unix::init(&config.clone(),  command_sender.clone());
+          tcp::init(&config.clone(),  command_sender.clone());
       },
       Err(errstr) => fail!(errstr)
     }

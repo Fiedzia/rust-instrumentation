@@ -22,7 +22,7 @@ First, you will need cargo-lite (https://github.com/cmr/cargo-lite)
 in order to build it.
 See examples/full for code you'll need to add to you app.
 In the simplest case you'll need to add few lines of boiler plate
-to your main.rs and implement fn get_key(key:~str) -> Option(~str).
+to your main.rs and implement fn get_key(key:~str) -> json::Json.
 
 Using attached example
 
@@ -44,8 +44,7 @@ $ GET_SUBKEYS None ['myapp']
 $ GET_SUBKEYS myapp ['foo', ''bar]
 ```
 
-
-    Note that instrumentation configuration comes from instrumentation.conf file.
+Note that instrumentation configuration comes from instrumentation.conf file.
 (it can be stored in INSTRUMENTATION env var as well).
 This puts application user in control if and how metrics can be accessed
 to make it as convenient for him as possible.

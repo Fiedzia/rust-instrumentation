@@ -9,7 +9,6 @@ mod app_instrumentation;
 
 
 fn main(){
-	  let mut foo:int  = 0;
 		let chan = instrumentation::init();
 	  app_instrumentation::init(chan);
 	  println!("starting hello");

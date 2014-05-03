@@ -21,6 +21,6 @@ pub fn get_subkeys(_self: &instrumentation::Instrument, root:Option<~str>) -> js
 }
 
 pub fn init (sender:Sender<instrumentation::Instrument>){
-	  let mut my_instrument = instrumentation::Instrument{name: "myapp", _get_key: Some(get_key), _get_subkeys: Some(get_subkeys), ..Default::default()};
+	  let my_instrument = instrumentation::Instrument{name: "myapp", _get_key: Some(get_key), _get_subkeys: Some(get_subkeys), ..Default::default()};
 		instrumentation::register(sender, my_instrument);
 }

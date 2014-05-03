@@ -71,6 +71,7 @@ pub fn combine_result_and_error(result: json::Json, err: json::Json) -> json::Js
     json::Object(msg)
 }
 
+
 pub fn encode_message(msg: json::Json) -> ~Vec<u8> {
     //! Encode streaming protocol message
     let raw_bytes:Vec<u8> = Vec::from_slice(msg.to_str().as_bytes());

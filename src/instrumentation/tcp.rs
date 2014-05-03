@@ -33,7 +33,7 @@ pub fn init(config:&HashMap<~str, ~str>,
                 
                 let command_sender_clone = command_sender.clone();
                 spawn(proc(){
-                    let mut client_stream = client.unwrap();
+                    let client_stream = client.unwrap();
                     handle_client(client_stream, command_sender_clone, MAX_PACKET_SIZE);
                 });
             }
