@@ -10,6 +10,9 @@ import time
 
 MAX_MSG_SIZE = 2**16-1
 
+class MsgError(Exception):
+    def __init__(self, error):
+        self.error = error
 
 def prepare_msg(op, key):
     if not key:
@@ -28,6 +31,8 @@ def read_msg(s):
         raise Exception('invalid msg_size: {}'.format(msg_size))
     msg = s.recv(msg_size).decode('utf8')
     parsed_msg = json.loads(msg)
+    if parsed_msg.error:
+        raise MsgError(parsed_msg.error)
     return parsed_msg
 
 
@@ -69,16 +74,22 @@ if __name__ == '__main__':
         sys.exit(1)
     
     s.send(prepare_msg(cmd, key))
-    res = read_msg(s)
-    print('{} {} {}'.format(cmd, key, res))
+    try:
+        res = read_msg(s)
+        print('{} {} {}'.format(cmd, key, res))
+    except MsgError as e:
+        sys.stderr.write('error: {}'.format(e.error))
+        sys.exit(1)
+
     if args.timer is not None:
         while True:
             time.sleep(args.timer)
             s.send(prepare_msg(cmd, key))
-            res = read_msg(s)
-            print('{} {} {}'.format(cmd, key, res))
-   
-    
+            try:
+                res = read_msg(s)
+                print('{} {} {}'.format(cmd, key, res))
+            except MsgError as e:
+                sys.stderr.write('error: {}'.format(e.error))
+  
     #import pudb; pudb.set_trace()
-    
     s.close()

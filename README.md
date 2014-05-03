@@ -70,11 +70,9 @@ Current state:
 
 TODO:
 
-    * Fix failure messages for closed sockets
     * Replace ~ with & whenever possible
     * Tests
     * Proper error handling
-    * Include errors/metadata in returned json
     * Add http listener
     * Support for pushing metrics to zabbix/graphite/whatever
     * Write documentation
